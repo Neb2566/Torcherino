@@ -1,4 +1,4 @@
-package com.sci.torcherino;
+package com.sci.torcherino.lib;
 
 /**
  * @author sci4me

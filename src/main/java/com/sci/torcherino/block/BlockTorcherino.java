@@ -14,7 +14,7 @@ import net.minecraft.world.World;
  * @author sci4me
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public final class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
+public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
     public BlockTorcherino() {
         this.setBlockName("torcherino");
         this.setLightLevel(0.75f);

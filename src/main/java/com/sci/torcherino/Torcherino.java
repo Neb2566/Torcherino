@@ -2,6 +2,8 @@ package com.sci.torcherino;
 
 import com.sci.torcherino.init.ModBlocks;
 import com.sci.torcherino.init.Recipes;
+import com.sci.torcherino.lib.Props;
+import com.sci.torcherino.tile.TileCompressedTorcherino;
 import com.sci.torcherino.tile.TileTorcherino;
 import com.sci.torcherino.update.IUpdatableMod;
 import com.sci.torcherino.update.ModVersion;
@@ -15,7 +17,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -30,6 +31,8 @@ public class Torcherino implements IUpdatableMod
     private static Torcherino instance;
 
     public static boolean animatedTextures;
+    public static boolean compressedTorcherino;
+    public static boolean overPoweredRecipe;
 
     @Mod.InstanceFactory
     public static Torcherino instance()
@@ -62,32 +65,38 @@ public class Torcherino implements IUpdatableMod
             cfg.load();
 
             Torcherino.animatedTextures = cfg.getBoolean("animatedTextures", "visual", true, "Should Torcherino use animated textures?");
+            Torcherino.compressedTorcherino = cfg.getBoolean("compressedTorcherino", "general", false, "Are compressed Torcherinos enabled?");
+            Torcherino.overPoweredRecipe = cfg.getBoolean("overPoweredRecipe", "general", true, "Is the recipe for Torcherino extremely OP?");
 
             this.blacklistedBlocks = cfg.getStringList("blacklistedBlocks", "blacklist", new String[]{}, "modid:unlocalized");
             this.blacklistedTiles = cfg.getStringList("blacklistedTiles", "blacklist", new String[]{}, "Fully qualified class name");
-
-            ModBlocks.init();
-            Recipes.init(cfg);
         }
         finally
         {
             if (cfg.hasChanged())
                 cfg.save();
         }
+
+        ModBlocks.init();
+        Recipes.init();
     }
 
     @Mod.EventHandler
     public void init(final FMLInitializationEvent evt)
     {
-        TileTorcherino.blacklistBlock(Blocks.air);
-        TileTorcherino.blacklistBlock(ModBlocks.torcherino);
-        TileTorcherino.blacklistTile(TileTorcherino.class);
+        TorcherinoRegistry.blacklistBlock(Blocks.air);
 
-        TileTorcherino.blacklistBlock(Blocks.water);
-        TileTorcherino.blacklistBlock(Blocks.flowing_water);
+        TorcherinoRegistry.blacklistBlock(ModBlocks.torcherino);
+        if (ModBlocks.compressedTorcherino != null)
+            TorcherinoRegistry.blacklistBlock(ModBlocks.compressedTorcherino);
+        TorcherinoRegistry.blacklistTile(TileTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileCompressedTorcherino.class);
 
-        TileTorcherino.blacklistBlock(Blocks.lava);
-        TileTorcherino.blacklistBlock(Blocks.flowing_lava);
+        TorcherinoRegistry.blacklistBlock(Blocks.water);
+        TorcherinoRegistry.blacklistBlock(Blocks.flowing_water);
+
+        TorcherinoRegistry.blacklistBlock(Blocks.lava);
+        TorcherinoRegistry.blacklistBlock(Blocks.flowing_lava);
     }
 
     @Mod.EventHandler
@@ -120,7 +129,7 @@ public class Torcherino implements IUpdatableMod
 
         System.out.println("Blacklisting block: " + block.getUnlocalizedName());
 
-        TileTorcherino.blacklistBlock(block);
+        TorcherinoRegistry.blacklistBlock(block);
     }
 
     @SuppressWarnings("unchecked")
@@ -142,7 +151,7 @@ public class Torcherino implements IUpdatableMod
                 return;
             }
 
-            TileTorcherino.blacklistTile((Class<? extends TileEntity>) clazz);
+            TorcherinoRegistry.blacklistTile((Class<? extends TileEntity>) clazz);
         }
         catch (final ClassNotFoundException e)
         {
