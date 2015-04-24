@@ -4,6 +4,7 @@ import com.sci.torcherino.init.ModBlocks;
 import com.sci.torcherino.init.Recipes;
 import com.sci.torcherino.lib.Props;
 import com.sci.torcherino.tile.TileCompressedTorcherino;
+import com.sci.torcherino.tile.TileDoubleCompressedTorcherino;
 import com.sci.torcherino.tile.TileTorcherino;
 import com.sci.torcherino.update.IUpdatableMod;
 import com.sci.torcherino.update.ModVersion;
@@ -32,6 +33,7 @@ public class Torcherino implements IUpdatableMod
 
     public static boolean animatedTextures;
     public static boolean compressedTorcherino;
+    public static boolean doubleCompressedTorcherino;
     public static boolean overPoweredRecipe;
 
     @Mod.InstanceFactory
@@ -66,6 +68,7 @@ public class Torcherino implements IUpdatableMod
 
             Torcherino.animatedTextures = cfg.getBoolean("animatedTextures", "visual", true, "Should Torcherino use animated textures?");
             Torcherino.compressedTorcherino = cfg.getBoolean("compressedTorcherino", "general", false, "Are compressed Torcherinos enabled?");
+            Torcherino.doubleCompressedTorcherino = cfg.getBoolean("doubleCompressedTorcherin", "general", false, "Are double compressed Torcherinos enabled?");
             Torcherino.overPoweredRecipe = cfg.getBoolean("overPoweredRecipe", "general", true, "Is the recipe for Torcherino extremely OP?");
 
             this.blacklistedBlocks = cfg.getStringList("blacklistedBlocks", "blacklist", new String[]{}, "modid:unlocalized");
@@ -89,8 +92,11 @@ public class Torcherino implements IUpdatableMod
         TorcherinoRegistry.blacklistBlock(ModBlocks.torcherino);
         if (ModBlocks.compressedTorcherino != null)
             TorcherinoRegistry.blacklistBlock(ModBlocks.compressedTorcherino);
+        if (ModBlocks.doubleCompressedTorcherino != null)
+            TorcherinoRegistry.blacklistBlock(ModBlocks.doubleCompressedTorcherino);
         TorcherinoRegistry.blacklistTile(TileTorcherino.class);
         TorcherinoRegistry.blacklistTile(TileCompressedTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileDoubleCompressedTorcherino.class);
 
         TorcherinoRegistry.blacklistBlock(Blocks.water);
         TorcherinoRegistry.blacklistBlock(Blocks.flowing_water);

@@ -23,6 +23,11 @@ public final class Recipes
         {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.compressedTorcherino), new Object[]{"ttt","ttt","ttt", 't', ModBlocks.torcherino});
         }
+
+        if (Torcherino.doubleCompressedTorcherino && Torcherino.compressedTorcherino)
+        {
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.doubleCompressedTorcherino), new Object[]{"ttt","ttt","ttt", 't', ModBlocks.compressedTorcherino});
+        }
     }
 
     private Recipes()
