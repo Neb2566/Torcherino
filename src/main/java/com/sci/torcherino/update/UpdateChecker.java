@@ -4,10 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentStyle;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import tv.twitch.chat.ChatMessage;
 
 import static net.minecraft.util.EnumChatFormatting.*;
 

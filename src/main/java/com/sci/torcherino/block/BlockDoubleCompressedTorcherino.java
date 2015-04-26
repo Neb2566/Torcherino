@@ -1,7 +1,6 @@
 package com.sci.torcherino.block;
 
 import com.sci.torcherino.Torcherino;
-import com.sci.torcherino.tile.TileCompressedTorcherino;
 import com.sci.torcherino.tile.TileDoubleCompressedTorcherino;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -9,7 +8,6 @@ import net.minecraft.world.World;
 /**
  * @author MrComputerGhost
  */
-
 public class BlockDoubleCompressedTorcherino extends BlockTorcherino
 {
     public BlockDoubleCompressedTorcherino()
