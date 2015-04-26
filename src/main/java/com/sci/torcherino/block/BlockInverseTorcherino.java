@@ -1,7 +1,7 @@
 package com.sci.torcherino.block;
 
 import com.sci.torcherino.Torcherino;
-import com.sci.torcherino.tile.TileTorcherino;
+import com.sci.torcherino.tile.TileInverseTorcherino;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.ITileEntityProvider;
@@ -12,13 +12,12 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 /**
- * @author sci4me
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
+ * @author MrComputerGhost
  */
-public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
+public class BlockInverseTorcherino extends BlockTorch implements ITileEntityProvider {
 
-    public BlockTorcherino() {
-        this.setBlockName("torcherino");
+    public BlockInverseTorcherino() {
+        this.setBlockName("inverse_torcherino");
         this.setLightLevel(0.75f);
         this.setBlockTextureName("torcherino:torcherino" + (Torcherino.animatedTextures ? "_animated" : ""));
     }
@@ -28,14 +27,14 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
         if (!world.isRemote) {
             final TileEntity tile = world.getTileEntity(x, y, z);
 
-            if (tile != null && tile instanceof TileTorcherino) {
-                ((TileTorcherino) tile).setActive(!world.isBlockIndirectlyGettingPowered(x, y, z));
+            if (tile != null && tile instanceof TileInverseTorcherino) {
+                ((TileInverseTorcherino) tile).setActive(world.isBlockIndirectlyGettingPowered(x, y, z));
             }
         }
 
         super.onBlockAdded(world, x, y, z);
         if (Torcherino.logPlacement)
-            Torcherino.logger.log(Level.INFO, "Torcherino was placed at " + x + ", " + y + ", " + z);
+            Torcherino.logger.log(Level.INFO, "Inverted Torcherino was placed at " + x + ", " + y + ", " + z);
     }
 
     @Override
@@ -43,8 +42,8 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
         if (!world.isRemote) {
             TileEntity tile = world.getTileEntity(x, y, z);
 
-            if (tile != null && tile instanceof TileTorcherino) {
-                ((TileTorcherino) tile).setActive(!world.isBlockIndirectlyGettingPowered(x, y, z));
+            if (tile != null && tile instanceof TileInverseTorcherino) {
+                ((TileInverseTorcherino) tile).setActive(world.isBlockIndirectlyGettingPowered(x, y, z));
             }
         }
 
@@ -56,11 +55,11 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
         if (!world.isRemote) {
             final TileEntity tile = world.getTileEntity(x, y, z);
 
-            if (tile == null || !(tile instanceof TileTorcherino)) {
+            if (tile == null || !(tile instanceof TileInverseTorcherino)) {
                 return false;
             }
 
-            final TileTorcherino torch = (TileTorcherino) tile;
+            final TileInverseTorcherino torch = (TileInverseTorcherino) tile;
 
             torch.changeMode(player.isSneaking());
 
@@ -76,7 +75,7 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
 
     @Override
     public TileEntity createNewTileEntity(final World world, final int i) {
-        return new TileTorcherino();
+        return new TileInverseTorcherino();
     }
 
 }

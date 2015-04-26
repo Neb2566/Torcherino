@@ -13,10 +13,9 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import java.util.Random;
 
 /**
- * @author sci4me
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
+ * @author MrComputerGhost
  */
-public class TileTorcherino extends TileEntity implements IEnergyHandler {
+public class TileInverseTorcherino extends TileEntity implements IEnergyHandler {
 
     private static final String[] MODES = new String[]{"Stopped", "Radius: +1, Area: 3x3x3", "Radius: +2, Area: 5x3x5", "Radius: +3, Area: 7x3x7", "Radius: +4, Area: 9x3x9"};
     private static final int SPEEDS = 4;
@@ -36,29 +35,25 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
 
     private EnergyStorage redstoneFlux = new EnergyStorage(64);
 
-    public TileTorcherino()
-    {
+    public TileInverseTorcherino() {
         this.isActive = true;
         this.cachedMode = -1;
         this.rand = new Random();
     }
 
-    protected int speed(final int base)
-    {
+    protected int speed(final int base) {
         return base;
     }
 
     @Override
-    public void updateEntity()
-    {
+    public void updateEntity() {
         if (this.worldObj.isRemote)
             return;
 
         if (!this.isActive || this.mode == 0 || this.speed == 0)
             return;
 
-        if (this.cachedMode != this.mode)
-        {
+        if (this.cachedMode != this.mode) {
             this.xMin = this.xCoord - this.mode;
             this.yMin = this.yCoord - 1;
             this.zMin = this.zCoord - this.mode;
@@ -112,22 +107,17 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
         }
     }
 
-    public void setActive(final boolean active)
-    {
+    public void setActive(final boolean active) {
         this.isActive = active;
     }
 
-    public void changeMode(final boolean sneaking)
-    {
-        if (sneaking)
-        {
-            if (this.speed < TileTorcherino.SPEEDS)
+    public void changeMode(final boolean sneaking) {
+        if (sneaking) {
+            if (this.speed < TileInverseTorcherino.SPEEDS)
                 this.speed++;
             else
                 this.speed = 0;
-        }
-        else
-        {
+        } else {
             if (this.mode < MODES.length - 1)
                 this.mode++;
             else
@@ -135,19 +125,16 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
         }
     }
 
-    public String getSpeedDescription()
-    {
+    public String getSpeedDescription() {
         return this.speed(this.speed) * 100 + "% increase";
     }
 
-    public String getModeDescription()
-    {
-        return TileTorcherino.MODES[this.mode];
+    public String getModeDescription() {
+        return TileInverseTorcherino.MODES[this.mode];
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
-    {
+    public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setByte("Speed", this.speed);
         nbt.setByte("Mode", this.mode);
@@ -155,8 +142,7 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt)
-    {
+    public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         this.speed = nbt.getByte("Speed");
         this.mode = nbt.getByte("Mode");

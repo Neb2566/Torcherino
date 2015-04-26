@@ -3,9 +3,7 @@ package com.sci.torcherino;
 import com.sci.torcherino.init.ModBlocks;
 import com.sci.torcherino.init.Recipes;
 import com.sci.torcherino.lib.Props;
-import com.sci.torcherino.tile.TileCompressedTorcherino;
-import com.sci.torcherino.tile.TileDoubleCompressedTorcherino;
-import com.sci.torcherino.tile.TileTorcherino;
+import com.sci.torcherino.tile.*;
 import com.sci.torcherino.update.IUpdatableMod;
 import com.sci.torcherino.update.ModVersion;
 import com.sci.torcherino.update.UpdateChecker;
@@ -19,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
@@ -35,6 +34,8 @@ public class Torcherino implements IUpdatableMod
     public static boolean compressedTorcherino;
     public static boolean doubleCompressedTorcherino;
     public static boolean overPoweredRecipe;
+    public static boolean logPlacement;
+    public static boolean useRF;
 
     @Mod.InstanceFactory
     public static Torcherino instance()
@@ -44,6 +45,8 @@ public class Torcherino implements IUpdatableMod
         return Torcherino.instance;
     }
 
+    public static Logger logger;
+
     private String[] blacklistedBlocks;
     private String[] blacklistedTiles;
 
@@ -52,8 +55,10 @@ public class Torcherino implements IUpdatableMod
     }
 
     @Mod.EventHandler
-    public void preInit(final FMLPreInitializationEvent evt)
-    {
+    public void preInit(final FMLPreInitializationEvent evt) {
+
+        logger = evt.getModLog();
+
         final File folder = new File(evt.getModConfigurationDirectory(), "sci4me");
 
         if (!folder.exists())
@@ -70,6 +75,8 @@ public class Torcherino implements IUpdatableMod
             Torcherino.compressedTorcherino = cfg.getBoolean("compressedTorcherino", "general", false, "Are compressed Torcherinos enabled?");
             Torcherino.doubleCompressedTorcherino = cfg.getBoolean("doubleCompressedTorcherin", "general", false, "Are double compressed Torcherinos enabled?");
             Torcherino.overPoweredRecipe = cfg.getBoolean("overPoweredRecipe", "general", true, "Is the recipe for Torcherino extremely OP?");
+            Torcherino.logPlacement = cfg.getBoolean("logPlacement", "general", false, "(For Server Owners) Is it logged when someone places a Torcherino?");
+            Torcherino.useRF = cfg.getBoolean("useRF", "general", false, "Do Torcherinos require Redstone Flux to run?");
 
             this.blacklistedBlocks = cfg.getStringList("blacklistedBlocks", "blacklist", new String[]{}, "modid:unlocalized");
             this.blacklistedTiles = cfg.getStringList("blacklistedTiles", "blacklist", new String[]{}, "Fully qualified class name");
@@ -85,18 +92,25 @@ public class Torcherino implements IUpdatableMod
     }
 
     @Mod.EventHandler
-    public void init(final FMLInitializationEvent evt)
-    {
+    public void init(final FMLInitializationEvent evt) {
         TorcherinoRegistry.blacklistBlock(Blocks.air);
 
         TorcherinoRegistry.blacklistBlock(ModBlocks.torcherino);
-        if (ModBlocks.compressedTorcherino != null)
+        if (ModBlocks.compressedTorcherino != null) {
             TorcherinoRegistry.blacklistBlock(ModBlocks.compressedTorcherino);
-        if (ModBlocks.doubleCompressedTorcherino != null)
+            TorcherinoRegistry.blacklistBlock(ModBlocks.compressedInverseTorcherino);
+        }
+        if (ModBlocks.doubleCompressedTorcherino != null) {
             TorcherinoRegistry.blacklistBlock(ModBlocks.doubleCompressedTorcherino);
+            TorcherinoRegistry.blacklistBlock(ModBlocks.doubleCompressedInverseTorcherino);
+        }
         TorcherinoRegistry.blacklistTile(TileTorcherino.class);
         TorcherinoRegistry.blacklistTile(TileCompressedTorcherino.class);
         TorcherinoRegistry.blacklistTile(TileDoubleCompressedTorcherino.class);
+
+        TorcherinoRegistry.blacklistTile(TileInverseTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileCompressedInverseTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileDoubleCompressedInverseTorcherino.class);
 
         TorcherinoRegistry.blacklistBlock(Blocks.water);
         TorcherinoRegistry.blacklistBlock(Blocks.flowing_water);
@@ -106,8 +120,7 @@ public class Torcherino implements IUpdatableMod
     }
 
     @Mod.EventHandler
-    public void postInit(final FMLPostInitializationEvent evt)
-    {
+    public void postInit(final FMLPostInitializationEvent evt) {
         for (final String block : this.blacklistedBlocks)
             this.blacklistBlock(block);
 
@@ -115,8 +128,7 @@ public class Torcherino implements IUpdatableMod
             this.blacklistTile(tile);
     }
 
-    private void blacklistBlock(final String s)
-    {
+    private void blacklistBlock(final String s) {
         final String[] parts = s.split(":");
 
         if (parts.length != 2)
@@ -139,8 +151,7 @@ public class Torcherino implements IUpdatableMod
     }
 
     @SuppressWarnings("unchecked")
-    private void blacklistTile(final String s)
-    {
+    private void blacklistTile(final String s) {
         try
         {
             final Class<?> clazz = this.getClass().getClassLoader().loadClass(s);
@@ -166,8 +177,7 @@ public class Torcherino implements IUpdatableMod
     }
 
     @Mod.EventHandler
-    public void imcMessage(final FMLInterModComms.IMCEvent evt)
-    {
+    public void imcMessage(final FMLInterModComms.IMCEvent evt) {
         for (final FMLInterModComms.IMCMessage message : evt.getMessages())
         {
             if (!message.isStringMessage())
