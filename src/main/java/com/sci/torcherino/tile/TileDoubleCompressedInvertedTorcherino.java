@@ -4,9 +4,9 @@ package com.sci.torcherino.tile;
  * @author MrComputerGhost
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class TileDoubleCompressedInverseTorcherino extends TileTorcherino
+public class TileDoubleCompressedInvertedTorcherino extends TileTorcherino
 {
-    public TileDoubleCompressedInverseTorcherino()
+    public TileDoubleCompressedInvertedTorcherino()
     {
         super(true);
     }

@@ -118,9 +118,9 @@ public class Torcherino implements IUpdatableMod
         TorcherinoRegistry.blacklistTile(TileCompressedTorcherino.class);
         TorcherinoRegistry.blacklistTile(TileDoubleCompressedTorcherino.class);
 
-        TorcherinoRegistry.blacklistTile(TileInverseTorcherino.class);
-        TorcherinoRegistry.blacklistTile(TileCompressedInverseTorcherino.class);
-        TorcherinoRegistry.blacklistTile(TileDoubleCompressedInverseTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileInvertedTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileCompressedInvertedTorcherino.class);
+        TorcherinoRegistry.blacklistTile(TileDoubleCompressedInvertedTorcherino.class);
 
         TorcherinoRegistry.blacklistBlock(Blocks.water);
         TorcherinoRegistry.blacklistBlock(Blocks.flowing_water);

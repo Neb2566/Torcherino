@@ -3,5 +3,5 @@ tile.compressed_torcherino.name=Compressed Torcherino
 tile.double_compressed_torcherino.name=Super Compressed Torcherino
 
 tile.inverse_torcherino.name=Inverted Torcherino
-tile.compressed_inverse_torcherino.name=Compressed Inverted Torcherino
-tile.double_compressed_inverse_torcherino.name=Super Compressed Inverted Torcherino
+tile.compressed_inverse_torcherino.name=Inverted Compressed Torcherino
+tile.double_compressed_inverse_torcherino.name=Inverted Super Compressed Torcherino

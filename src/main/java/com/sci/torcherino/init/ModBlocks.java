@@ -16,15 +16,15 @@ public final class ModBlocks
     public static BlockCompressedTorcherino compressedTorcherino;
     public static BlockDoubleCompressedTorcherino doubleCompressedTorcherino;
 
-    public static BlockInverseTorcherino inverseTorcherino;
-    public static BlockCompressedInverseTorcherino compressedInverseTorcherino;
-    public static BlockDoubleCompressedInverseTorcherino doubleCompressedInverseTorcherino;
+    public static BlockInvertedTorcherino inverseTorcherino;
+    public static BlockCompressedInvertedTorcherino compressedInverseTorcherino;
+    public static BlockDoubleCompressedInvertedTorcherino doubleCompressedInverseTorcherino;
 
     public static void init()
     {
         ModBlocks.torcherino = new BlockTorcherino();
 
-        ModBlocks.inverseTorcherino = new BlockInverseTorcherino();
+        ModBlocks.inverseTorcherino = new BlockInvertedTorcherino();
 
         if (Torcherino.compressedTorcherino)
         {
@@ -32,9 +32,9 @@ public final class ModBlocks
             GameRegistry.registerBlock(ModBlocks.compressedTorcherino, ModBlocks.compressedTorcherino.getUnlocalizedName());
             GameRegistry.registerTileEntity(TileCompressedTorcherino.class, "compressed_torcherino_tile");
 
-            ModBlocks.compressedInverseTorcherino = new BlockCompressedInverseTorcherino();
+            ModBlocks.compressedInverseTorcherino = new BlockCompressedInvertedTorcherino();
             GameRegistry.registerBlock(ModBlocks.compressedInverseTorcherino, ModBlocks.compressedInverseTorcherino.getUnlocalizedName());
-            GameRegistry.registerTileEntity(TileCompressedInverseTorcherino.class, "compressed_inverse_torcherino_tile");
+            GameRegistry.registerTileEntity(TileCompressedInvertedTorcherino.class, "compressed_inverse_torcherino_tile");
         }
         if (Torcherino.doubleCompressedTorcherino && Torcherino.compressedTorcherino)
         {
@@ -42,16 +42,16 @@ public final class ModBlocks
             GameRegistry.registerBlock(ModBlocks.doubleCompressedTorcherino, ModBlocks.doubleCompressedTorcherino.getUnlocalizedName());
             GameRegistry.registerTileEntity(TileDoubleCompressedTorcherino.class, "double_compressed_torcherino_tile");
 
-            ModBlocks.doubleCompressedInverseTorcherino = new BlockDoubleCompressedInverseTorcherino();
+            ModBlocks.doubleCompressedInverseTorcherino = new BlockDoubleCompressedInvertedTorcherino();
             GameRegistry.registerBlock(ModBlocks.doubleCompressedInverseTorcherino, ModBlocks.doubleCompressedInverseTorcherino.getUnlocalizedName());
-            GameRegistry.registerTileEntity(TileDoubleCompressedInverseTorcherino.class, "double_compressed_inverse_torcherino_tile");
+            GameRegistry.registerTileEntity(TileDoubleCompressedInvertedTorcherino.class, "double_compressed_inverse_torcherino_tile");
         }
 
         GameRegistry.registerBlock(ModBlocks.torcherino, ModBlocks.torcherino.getUnlocalizedName());
         GameRegistry.registerTileEntity(TileTorcherino.class, "torcherino_tile");
 
         GameRegistry.registerBlock(ModBlocks.inverseTorcherino, ModBlocks.inverseTorcherino.getUnlocalizedName());
-        GameRegistry.registerTileEntity(TileInverseTorcherino.class, "inverse_torcherino_tile");
+        GameRegistry.registerTileEntity(TileInvertedTorcherino.class, "inverse_torcherino_tile");
     }
 
     private ModBlocks()

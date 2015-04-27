@@ -205,6 +205,7 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler
         tag.setByte("Speed", this.speed);
         tag.setByte("Mode", this.mode);
         tag.setBoolean("PoweredByRedstone", this.poweredByRedstone);
+        tag.setInteger("EnergyStored", this.redstoneFlux);
     }
 
     @Override
@@ -215,6 +216,7 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler
         this.speed = tag.getByte("Speed");
         this.mode = tag.getByte("Mode");
         this.poweredByRedstone = tag.getBoolean("PoweredByRedstone");
+        this.redstoneFlux = tag.getInteger("EnergyStored");
     }
 
     @Override
