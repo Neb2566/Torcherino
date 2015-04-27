@@ -13,6 +13,7 @@ public class BlockDoubleCompressedTorcherino extends BlockTorcherino
     public BlockDoubleCompressedTorcherino()
     {
         this.setBlockName("double_compressed_torcherino");
+        this.setLightLevel(0.75f);
         this.setBlockTextureName("torcherino:double_compressed_torcherino" + (Torcherino.animatedTextures ? "_animated" : ""));
     }
 

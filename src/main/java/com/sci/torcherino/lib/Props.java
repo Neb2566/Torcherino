@@ -12,5 +12,7 @@ public final class Props
 
     public static final String UPDATE_URL = "https://raw.githubusercontent.com/sci4me/Torcherino/1.7.10/VERSION";
 
+    public static final String COFH_CORE = "CoFHCore";
+
     private Props(){}
 }

@@ -1,9 +1,10 @@
 package com.sci.torcherino.tile;
 
-import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 import com.sci.torcherino.Torcherino;
 import com.sci.torcherino.TorcherinoRegistry;
+import com.sci.torcherino.lib.Props;
+import cpw.mods.fml.common.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -16,12 +17,18 @@ import java.util.Random;
  * @author sci4me
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class TileTorcherino extends TileEntity implements IEnergyHandler {
-
+@Optional.Interface(iface = "cofh.api.energy.IEnergyHandler", modid = Props.COFH_CORE)
+public class TileTorcherino extends TileEntity implements IEnergyHandler
+{
     private static final String[] MODES = new String[]{"Stopped", "Radius: +1, Area: 3x3x3", "Radius: +2, Area: 5x3x5", "Radius: +3, Area: 7x3x7", "Radius: +4, Area: 9x3x9"};
     private static final int SPEEDS = 4;
 
-    private boolean isActive;
+    private static final int MAX_ENERGY_STORED = 1024;
+
+    private int redstoneFlux;
+
+    private boolean requiredRedstoneState;
+    private boolean poweredByRedstone;
     private byte speed;
     private byte mode;
     private byte cachedMode;
@@ -34,11 +41,9 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
     private int yMax;
     private int zMax;
 
-    private EnergyStorage redstoneFlux = new EnergyStorage(64);
-
-    public TileTorcherino()
+    public TileTorcherino(final boolean requiredRedstoneState)
     {
-        this.isActive = true;
+        this.requiredRedstoneState = requiredRedstoneState;
         this.cachedMode = -1;
         this.rand = new Random();
     }
@@ -54,9 +59,18 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
         if (this.worldObj.isRemote)
             return;
 
-        if (!this.isActive || this.mode == 0 || this.speed == 0)
+        if (this.poweredByRedstone != this.requiredRedstoneState || this.mode == 0 || this.speed == 0)
             return;
 
+        if (Torcherino.useRF && this.redstoneFlux <= 1)
+            return;
+
+        this.updateCachedModeIfNeeded();
+        this.tickNeighbors();
+    }
+
+    private void updateCachedModeIfNeeded()
+    {
         if (this.cachedMode != this.mode)
         {
             this.xMin = this.xCoord - this.mode;
@@ -67,54 +81,92 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
             this.zMax = this.zCoord + this.mode;
             this.cachedMode = this.mode;
         }
+    }
 
-        if ((Torcherino.useRF && redstoneFlux.getEnergyStored() > 1) || (!Torcherino.useRF)) {
-            for (int x = this.xMin; x <= this.xMax; x++) {
-                for (int y = this.yMin; y <= this.yMax; y++) {
-                    for (int z = this.zMin; z <= this.zMax; z++) {
-                        final Block block = this.worldObj.getBlock(x, y, z);
+    private void tickNeighbors()
+    {
+        for (int x = this.xMin; x <= this.xMax; x++)
+        {
+            for (int y = this.yMin; y <= this.yMax; y++)
+            {
+                for (int z = this.zMin; z <= this.zMax; z++)
+                {
+                    this.tickBlock(x, y, z);
+                }
+            }
+        }
+    }
 
-                        if (block == null)
-                            continue;
+    private void tickBlock(final int x, final int y, final int z)
+    {
+        final Block block = this.worldObj.getBlock(x, y, z);
 
-                        if (TorcherinoRegistry.isBlockBlacklisted(block))
-                            continue;
+        if (block == null)
+            return;
 
-                        if (block instanceof BlockFluidBase)
-                            continue;
+        if (TorcherinoRegistry.isBlockBlacklisted(block))
+            return;
 
-                        if (block.getTickRandomly()) {
-                            for (int i = 0; i < this.speed; i++) {
-                                block.updateTick(this.worldObj, x, y, z, this.rand);
-                                if (Torcherino.useRF)
-                                    redstoneFlux.setEnergyStored(redstoneFlux.getEnergyStored() - 1);
-                            }
-                        }
+        if (block instanceof BlockFluidBase)
+            return;
 
-                        if (block.hasTileEntity(this.worldObj.getBlockMetadata(x, y, z))) {
-                            final TileEntity tile = this.worldObj.getTileEntity(x, y, z);
-                            if (tile != null && !tile.isInvalid()) {
-                                if (TorcherinoRegistry.isTileBlacklisted(tile.getClass()))
-                                    continue;
+        if (block.getTickRandomly())
+        {
+            for (int i = 0; i < this.speed; i++)
+            {
+                if (Torcherino.useRF)
+                {
+                    if (this.useEnergy(1))
+                        block.updateTick(this.worldObj, x, y, z, this.rand);
+                }
+                else
+                {
+                    block.updateTick(this.worldObj, x, y, z, this.rand);
+                }
+            }
+        }
 
-                                for (int i = 0; i < this.speed(this.speed); i++) {
-                                    if (tile.isInvalid())
-                                        break;
-                                    tile.updateEntity();
-                                    if (Torcherino.useRF)
-                                        redstoneFlux.setEnergyStored(redstoneFlux.getEnergyStored() - 1);
-                                }
-                            }
-                        }
+        if (block.hasTileEntity(this.worldObj.getBlockMetadata(x, y, z)))
+        {
+            final TileEntity tile = this.worldObj.getTileEntity(x, y, z);
+            if (tile != null && !tile.isInvalid())
+            {
+                if (TorcherinoRegistry.isTileBlacklisted(tile.getClass()))
+                    return;
+
+                for (int i = 0; i < this.speed(this.speed); i++)
+                {
+                    if (tile.isInvalid())
+                        break;
+
+                    if (Torcherino.useRF)
+                    {
+                        if (this.useEnergy(1))
+                            tile.updateEntity();
+                    }
+                    else
+                    {
+                        tile.updateEntity();
                     }
                 }
             }
         }
     }
 
-    public void setActive(final boolean active)
+    private boolean useEnergy(final int amt)
     {
-        this.isActive = active;
+        if (this.redstoneFlux >= amt)
+        {
+            this.redstoneFlux -= amt;
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setPoweredByRedstone(final boolean poweredByRedstone)
+    {
+        this.poweredByRedstone = poweredByRedstone;
     }
 
     public void changeMode(final boolean sneaking)
@@ -146,45 +198,76 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public void writeToNBT(final NBTTagCompound tag)
     {
-        super.writeToNBT(nbt);
-        nbt.setByte("Speed", this.speed);
-        nbt.setByte("Mode", this.mode);
-        nbt.setBoolean("IsActive", this.isActive);
+        super.writeToNBT(tag);
+        tag.setBoolean("RequiredRedstoneState", this.requiredRedstoneState);
+        tag.setByte("Speed", this.speed);
+        tag.setByte("Mode", this.mode);
+        tag.setBoolean("PoweredByRedstone", this.poweredByRedstone);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt)
+    public void readFromNBT(final NBTTagCompound tag)
     {
-        super.readFromNBT(nbt);
-        this.speed = nbt.getByte("Speed");
-        this.mode = nbt.getByte("Mode");
-        this.isActive = nbt.getBoolean("IsActive");
+        super.readFromNBT(tag);
+        this.requiredRedstoneState = tag.getBoolean("RequiredRedstoneState");
+        this.speed = tag.getByte("Speed");
+        this.mode = tag.getByte("Mode");
+        this.poweredByRedstone = tag.getBoolean("PoweredByRedstone");
     }
 
     @Override
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return redstoneFlux.receiveEnergy(maxReceive, simulate);
+    @Optional.Method(modid = Props.COFH_CORE)
+    public final int receiveEnergy(final ForgeDirection from, final int maxReceive, final boolean simulate)
+    {
+        if (!Torcherino.useRF)
+            return 0;
+
+        final int energyReceived = Math.min(TileTorcherino.MAX_ENERGY_STORED - this.redstoneFlux, maxReceive);
+
+        if (!simulate)
+        {
+            this.redstoneFlux += energyReceived;
+        }
+
+        return energyReceived;
     }
 
     @Override
-    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return redstoneFlux.extractEnergy(maxExtract, simulate);
+    @Optional.Method(modid = Props.COFH_CORE)
+    public final int extractEnergy(final ForgeDirection from, final int maxExtract, final boolean simulate)
+    {
+        return 0;
     }
 
     @Override
-    public int getEnergyStored(ForgeDirection from) {
-        return redstoneFlux.getEnergyStored();
+    @Optional.Method(modid = Props.COFH_CORE)
+    public final int getEnergyStored(final ForgeDirection from)
+    {
+        if (!Torcherino.useRF)
+            return 0;
+
+        return this.redstoneFlux;
     }
 
     @Override
-    public int getMaxEnergyStored(ForgeDirection from) {
-        return redstoneFlux.getMaxEnergyStored();
+    @Optional.Method(modid = Props.COFH_CORE)
+    public final int getMaxEnergyStored(final ForgeDirection from)
+    {
+        if (!Torcherino.useRF)
+            return 0;
+
+        return TileTorcherino.MAX_ENERGY_STORED;
     }
 
     @Override
-    public boolean canConnectEnergy(ForgeDirection from) {
+    @Optional.Method(modid = Props.COFH_CORE)
+    public final boolean canConnectEnergy(final ForgeDirection from)
+    {
+        if (!Torcherino.useRF)
+            return false;
+
         return true;
     }
 }
