@@ -41,6 +41,11 @@ public class TileTorcherino extends TileEntity implements IEnergyHandler
     private int yMax;
     private int zMax;
 
+    public TileTorcherino()
+    {
+        this(false);
+    }
+
     public TileTorcherino(final boolean requiredRedstoneState)
     {
         this.requiredRedstoneState = requiredRedstoneState;
