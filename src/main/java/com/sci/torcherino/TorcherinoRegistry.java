@@ -6,28 +6,20 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author sci4me
- */
-public final class TorcherinoRegistry
-{
-    public static void blacklistBlock(final Block block)
-    {
+public final class TorcherinoRegistry {
+    public static void blacklistBlock(final Block block) {
         TorcherinoRegistry.blacklistedBlocks.add(block);
     }
 
-    public static void blacklistTile(final Class<? extends TileEntity> tile)
-    {
+    public static void blacklistTile(final Class<? extends TileEntity> tile) {
         TorcherinoRegistry.blacklistedTiles.add(tile);
     }
 
-    public static boolean isBlockBlacklisted(final Block block)
-    {
+    public static boolean isBlockBlacklisted(final Block block) {
         return TorcherinoRegistry.blacklistedBlocks.contains(block);
     }
 
-    public static boolean isTileBlacklisted(final Class<? extends TileEntity> tile)
-    {
+    public static boolean isTileBlacklisted(final Class<? extends TileEntity> tile) {
         return TorcherinoRegistry.blacklistedTiles.contains(tile);
     }
 
