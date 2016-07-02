@@ -12,12 +12,12 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "3.0s"
+version = "4.0s"
 group= "com.sci.torcherino"
 archivesBaseName = "Torcherino"
 
 minecraft {
-    version = "1.9.4-12.17.0.1976"
+    version = "1.10.2-12.18.0.2006-1.10.0"
     runDir = "run"
 
     replace "@VERSION@", project.version
