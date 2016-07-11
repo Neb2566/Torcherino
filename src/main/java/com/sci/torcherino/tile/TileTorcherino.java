@@ -89,6 +89,8 @@ public final class TileTorcherino extends TileEntity implements ITickable {
 
         if (block.getTickRandomly()) {
             for (int i = 0; i < this.speed; i++) {
+                if (getWorld().getBlockState(pos) != blockState)
+                    break;
                 block.updateTick(this.worldObj, pos, blockState, this.rand);
             }
         }
@@ -138,7 +140,7 @@ public final class TileTorcherino extends TileEntity implements ITickable {
     }
 
     @Override
-    public NBTTagCompound  writeToNBT(final NBTTagCompound tag) {
+    public NBTTagCompound writeToNBT(final NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setByte("Speed", this.speed);
         tag.setByte("Mode", this.mode);
