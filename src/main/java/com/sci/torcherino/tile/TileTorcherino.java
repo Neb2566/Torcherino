@@ -14,7 +14,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 
 import java.util.Random;
 
-public final class TileTorcherino extends TileEntity implements ITickable {
+public class TileTorcherino extends TileEntity implements ITickable {
     private static final String[] MODES = new String[]{"Stopped", "Radius: +1, Area: 3x3x3", "Radius: +2, Area: 5x3x5", "Radius: +3, Area: 7x3x7", "Radius: +4, Area: 9x3x9"};
     private static final int SPEEDS = 4;
 
