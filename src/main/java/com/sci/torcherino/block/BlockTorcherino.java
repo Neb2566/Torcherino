@@ -16,7 +16,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
-public final class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
+public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
     public BlockTorcherino() {
         this.setLightLevel(0.75f);
         this.setUnlocalizedName("torcherino.torcherino");

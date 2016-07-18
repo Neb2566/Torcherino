@@ -13,6 +13,16 @@ public final class ModRecipes {
         } else {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.torcherino), "SCS", "CTC", "SCS", 'C', Items.CLOCK, 'S', Items.NETHER_STAR, 'T', Blocks.TORCH);
         }
+
+        if (Torcherino.compressedTorcherino)
+        {
+            GameRegistry.addRecipe(new ItemStack(ModBlocks.compressedTorcherino), new Object[]{"ttt", "ttt", "ttt", 't', ModBlocks.torcherino});
+
+            if (Torcherino.doubleCompressedTorcherino)
+            {
+                GameRegistry.addRecipe(new ItemStack(ModBlocks.doubleCompressedTorcherino), new Object[]{"ttt", "ttt", "ttt", 't', ModBlocks.compressedTorcherino});
+            }
+        }
     }
 
     private ModRecipes() {
