@@ -42,7 +42,7 @@ public class TileTorcherino extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (this.worldObj.isRemote)
+        if (this.world.isRemote)
             return;
 
         if (this.poweredByRedstone || this.mode == 0 || this.speed == 0)
@@ -75,7 +75,7 @@ public class TileTorcherino extends TileEntity implements ITickable {
     }
 
     private void tickBlock(final BlockPos pos) {
-        final IBlockState blockState = this.worldObj.getBlockState(pos);
+        final IBlockState blockState = this.world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         if (block == null)
@@ -91,12 +91,12 @@ public class TileTorcherino extends TileEntity implements ITickable {
             for (int i = 0; i < this.speed; i++) {
                 if (getWorld().getBlockState(pos) != blockState)
                     break;
-                block.updateTick(this.worldObj, pos, blockState, this.rand);
+                block.updateTick(this.world, pos, blockState, this.rand);
             }
         }
 
-        if (block.hasTileEntity(this.worldObj.getBlockState(pos))) {
-            final TileEntity tile = this.worldObj.getTileEntity(pos);
+        if (block.hasTileEntity(this.world.getBlockState(pos))) {
+            final TileEntity tile = this.world.getTileEntity(pos);
             if (tile != null && !tile.isInvalid()) {
                 if (TorcherinoRegistry.isTileBlacklisted(tile.getClass()))
                     return;

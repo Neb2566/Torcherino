@@ -1,6 +1,6 @@
 [
 {
-  "modid": "Torcherino",
+  "modid": "torcherino",
   "name": "Torcherino",
   "description": "Simple mod that adds OP torches.",
   "version": "${version}",

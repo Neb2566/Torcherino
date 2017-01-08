@@ -39,7 +39,7 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
     }
 
     @Override
-    public void neighborChanged(final IBlockState state, final World world, final BlockPos pos, final Block block) {
+    public void neighborChanged(final IBlockState state, final World world, final BlockPos pos, final Block block, final BlockPos fromPos) {
         if (!world.isRemote) {
             final TileEntity tile = world.getTileEntity(pos);
 
@@ -48,11 +48,11 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
             }
         }
 
-        super.neighborChanged(state, world, pos, block);
+        super.neighborChanged(state, world, pos, block, fromPos);
     }
 
     @Override
-    public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer player, final EnumHand hand, final ItemStack heldItem, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
+    public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer player, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ) {
         if (!world.isRemote) {
             final TileEntity tile = world.getTileEntity(pos);
 
@@ -67,9 +67,9 @@ public class BlockTorcherino extends BlockTorch implements ITileEntityProvider {
             torch.changeMode(player.isSneaking());
 
             if (player.isSneaking()) {
-                player.addChatComponentMessage(new TextComponentString("Changed speed: " + torch.getSpeedDescription()));
+                player.sendMessage(new TextComponentString("Changed speed: " + torch.getSpeedDescription()));
             } else {
-                player.addChatComponentMessage(new TextComponentString("Changed mode: " + torch.getModeDescription()));
+                player.sendMessage(new TextComponentString("Changed mode: " + torch.getModeDescription()));
             }
         }
 

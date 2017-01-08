@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = "Torcherino", name = "Torcherino", version = "@VERSION@")
+@Mod(modid = "torcherino", name = "Torcherino", version = "@VERSION@")
 public final class Torcherino {
     private static Torcherino instance;
 

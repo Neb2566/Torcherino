@@ -12,18 +12,21 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "4.2s"
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = "5.0s"
 group= "com.sci.torcherino"
 archivesBaseName = "Torcherino"
 
 minecraft {
-    version = "1.10.2-12.18.0.2006-1.10.0"
+    version = "1.11-13.19.1.2199"
     runDir = "run"
 
     replace "@VERSION@", project.version
     replaceIn "Torcherino.java"
     
-    mappings = "snapshot_20160518"
+    mappings = "snapshot_20161220"
 }
 
 processResources {
