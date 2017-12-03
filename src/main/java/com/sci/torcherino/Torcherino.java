@@ -1,7 +1,6 @@
 package com.sci.torcherino;
 
-import com.sci.torcherino.init.ModBlocks;
-import com.sci.torcherino.init.ModRecipes;
+import com.sci.torcherino.mod.ModBlocks;
 import com.sci.torcherino.proxy.CommonProxy;
 import com.sci.torcherino.tile.TileCompressedTorcherino;
 import com.sci.torcherino.tile.TileDoubleCompressedTorcherino;
@@ -10,21 +9,21 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-
-@Mod(modid = "torcherino", name = "Torcherino", version = "@VERSION@")
+@Mod(modid = "torcherino", name = "Torcherino", version = "@VERSION@", dependencies = "required-after:forge@14.23.1.2555", useMetadata = true)
 public final class Torcherino {
+
     private static Torcherino instance;
 
     @Mod.InstanceFactory
-    public static Torcherino instance() {
+    public static Torcherino isntance() {
         if (Torcherino.instance == null) {
             Torcherino.instance = new Torcherino();
         }
@@ -34,49 +33,18 @@ public final class Torcherino {
     @SidedProxy(clientSide = "com.sci.torcherino.proxy.ClientProxy", serverSide = "com.sci.torcherino.proxy.ServerProxy")
     public static CommonProxy proxy;
 
-    public static boolean logPlacement;
-    public static boolean overPoweredRecipe;
-    public static boolean compressedTorcherino;
-    public static boolean doubleCompressedTorcherino;
-
-    private String[] blacklistedBlocks;
-    private String[] blacklistedTiles;
-
     public static Logger logger;
 
     @Mod.EventHandler
-    public void preInit(final FMLPreInitializationEvent evt) {
-        Torcherino.logger = evt.getModLog();
+    public void preInit(FMLPreInitializationEvent e) {
+        // Start loggger
+        Torcherino.logger = e.getModLog();
 
-        final File folder = new File(evt.getModConfigurationDirectory(), "sci4me");
-
-        if (!folder.exists())
-            folder.mkdir();
-
-        final Configuration cfg = new Configuration(new File(folder, "Torcherino.cfg"));
-        try {
-            cfg.load();
-
-            Torcherino.logPlacement = cfg.getBoolean("logPlacement", "general", false, "(For Server Owners) Is it logged when someone places a Torcherino?");
-            Torcherino.overPoweredRecipe = cfg.getBoolean("overPoweredRecipe", "general", true, "Is the recipe for Torcherino extremely OP?");
-            Torcherino.compressedTorcherino = cfg.getBoolean("compressedTorcherino", "general", false, "Is the recipe for the Compressed Torcherino enabled?");
-            Torcherino.doubleCompressedTorcherino = cfg.getBoolean("doubleCompressedTorcherino", "general", false, "Is the recipe for the Double Compressed Torcherino enabled? Only takes effect if Compressed Torcherinos are enabled.");
-
-            this.blacklistedBlocks = cfg.getStringList("blacklistedBlocks", "blacklist", new String[]{}, "modid:unlocalized");
-            this.blacklistedTiles = cfg.getStringList("blacklistedTiles", "blacklist", new String[]{}, "Fully qualified class name");
-        } finally {
-            if (cfg.hasChanged())
-                cfg.save();
-        }
-
-        ModBlocks.init();
-        ModRecipes.init();
-
-        Torcherino.proxy.preInit();
+        proxy.preInit(e);
     }
 
     @Mod.EventHandler
-    public void init(final FMLInitializationEvent evt) {
+    public void init(FMLInitializationEvent e) {
         TorcherinoRegistry.blacklistBlock(Blocks.AIR);
 
         TorcherinoRegistry.blacklistBlock(ModBlocks.torcherino);
@@ -93,23 +61,12 @@ public final class Torcherino {
         TorcherinoRegistry.blacklistBlock(Blocks.LAVA);
         TorcherinoRegistry.blacklistBlock(Blocks.FLOWING_LAVA);
 
-        Torcherino.proxy.init();
+        proxy.init(e);
     }
 
     @Mod.EventHandler
-    public void postInit(final FMLPostInitializationEvent evt) {
-        for (final String block : this.blacklistedBlocks)
-            this.blacklistBlock(block);
-
-        for (final String tile : this.blacklistedTiles)
-            this.blacklistTile(tile);
-
-        Torcherino.proxy.postInit();
-    }
-
-    @Mod.EventHandler
-    public void missingMapping(final FMLMissingMappingsEvent event) {
-        ModBlocks.handleMissingMappings(event);
+    public void postInit(FMLPostInitializationEvent e) {
+        proxy.postInit(e);
     }
 
     @Mod.EventHandler

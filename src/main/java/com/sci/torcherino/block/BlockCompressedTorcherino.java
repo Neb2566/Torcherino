@@ -4,9 +4,11 @@ import com.sci.torcherino.tile.TileCompressedTorcherino;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public final class BlockCompressedTorcherino extends BlockTorcherino {
+public class BlockCompressedTorcherino extends AbstractTorcherino {
     public BlockCompressedTorcherino() {
+        this.setLightLevel(0.75f);
         this.setUnlocalizedName("torcherino.compressed_torcherino");
+        this.setRegistryName("compressed_torcherino");
     }
 
     @Override

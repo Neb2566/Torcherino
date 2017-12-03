@@ -6,7 +6,10 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class TorcherinoRegistry {
+public class TorcherinoRegistry {
+    private static Set<Block> blacklistedBlocks = new HashSet<Block>();
+    private static Set<Class<? extends TileEntity>> blacklistedTiles = new HashSet<Class<? extends TileEntity>>();
+
     public static void blacklistBlock(final Block block) {
         TorcherinoRegistry.blacklistedBlocks.add(block);
     }
@@ -22,7 +25,4 @@ public final class TorcherinoRegistry {
     public static boolean isTileBlacklisted(final Class<? extends TileEntity> tile) {
         return TorcherinoRegistry.blacklistedTiles.contains(tile);
     }
-
-    private static Set<Block> blacklistedBlocks = new HashSet<Block>();
-    private static Set<Class<? extends TileEntity>> blacklistedTiles = new HashSet<Class<? extends TileEntity>>();
 }

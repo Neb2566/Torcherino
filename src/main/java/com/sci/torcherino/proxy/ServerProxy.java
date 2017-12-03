@@ -1,18 +1,9 @@
 package com.sci.torcherino.proxy;
 
-public final class ServerProxy extends CommonProxy {
-    @Override
-    public void preInit() {
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.relauncher.Side;
 
-    }
+@Mod.EventBusSubscriber(Side.SERVER)
+public class ServerProxy extends CommonProxy {
 
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void postInit() {
-
-    }
 }
